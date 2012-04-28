@@ -21,14 +21,13 @@
 
 // [PLUGIN:lw_langlink?develop_only=1&template=85]
 
-class lw_langlink extends lw_plugin {
-
+class lw_langlink extends lw_plugin 
+{
     function __construct() 
     {
         parent::__construct();
         $this->page = lw_page::getInstance($this->request->getIndex());
-        $reg 	 	= lw_registry::getInstance();
-    	$this->auth = $reg->getEntry("auth");
+    	$this->auth = lw_registry::getInstance()->getEntry("auth");
     }
     
     function buildPageOutput() 
@@ -36,7 +35,7 @@ class lw_langlink extends lw_plugin {
         if ($this->params['develop_only'] == 1 && $this->auth->isLoggedIn()) {
             $this->db->setStatement("SELECT * FROM t:lw_page_langlink WHERE page_link > 0 AND page_id = :id ");
             $this->db->bindParameter('id', 'i', $this->request->getIndex());
-            $erg = $this->db->pselect();
+            $result = $this->db->pselect();
 
             if (intval($this->params['template'])>0) {
                 $this->db->setStatement("SELECT * FROM t:lw_templates WHERE id = :id ");
@@ -49,8 +48,8 @@ class lw_langlink extends lw_plugin {
                 $tpla = '<!-- lw:blockstart default --><div class="lw_lang_link"><a href="<!-- lw:var link -->"><!-- lw:var shortcut --></a></div><!-- lw:blockend default -->';
             }
             $blocks = new lw_te($tpla);
-            if (is_array($erg)) {
-                foreach($erg as $lang) {
+            if (is_array($result)) {
+                foreach($result as $lang) {
                     if ($lang['page_link'] > 0 && strlen($lang['language']) > 0) {
                         
                         $tpld   = $blocks->getBlock(strtolower($lang['language']));
